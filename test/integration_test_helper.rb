@@ -58,13 +58,10 @@ class JavascriptIntegrationTest < ActionDispatch::IntegrationTest
   end
 end
 
-if Gem.loaded_specs.keys.include?('capybara-webkit')
-  require 'capybara-webkit'
-  Capybara.javascript_driver = :webkit
-else
-  Capybara.javascript_driver = :selenium
-end
 Capybara.default_driver = :rack_test
+
+require 'capybara/poltergeist'
+Capybara.javascript_driver = :poltergeist
 
 I18n.load_path += Dir[Rails.root.join(*%w{test fixtures flows locales * *.{rb,yml}})]
 

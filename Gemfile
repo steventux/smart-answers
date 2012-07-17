@@ -48,10 +48,7 @@ group :test do
   gem "shoulda", "~> 2.11.3"
   gem 'webmock', :require => false
   gem "simplecov", "0.4.2"
-end
-
-group :webkit do
-  gem 'capybara-webkit', "~> 0.12.1"
+  gem "poltergeist", "~> 0.6.0"
 end
 
 if ENV['RUBY_DEBUG']
