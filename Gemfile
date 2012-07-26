@@ -43,7 +43,7 @@ group :test do
   gem "shoulda", "~> 2.11.3"
   gem 'webmock', :require => false
   gem "simplecov", "0.4.2"
-  gem "poltergeist", "~> 0.6.0"
+  gem "poltergeist", "~> 0.7.0"
 end
 
 group :assets do
