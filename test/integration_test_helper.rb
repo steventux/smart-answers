@@ -16,11 +16,18 @@ class ActionDispatch::IntegrationTest
   end
 
   def assert_current_url(path_with_query, options = {})
+    wait_for_push_state(path_with_query)
     expected = URI.parse(path_with_query)
     current = URI.parse(current_url)
     assert_equal expected.path, current.path
     unless options[:ignore_query]
       assert_equal Rack::Utils.parse_query(expected.query), Rack::Utils.parse_query(current.query)
+    end
+  end
+
+  def wait_for_push_state(path)
+    if Capybara.current_driver == Capybara.javascript_driver
+      wait_until { page.evaluate_script('window.location.pathname') == path }
     end
   end
 
@@ -42,11 +49,11 @@ class ActionDispatch::IntegrationTest
   end
 
   def self.with_and_without_javascript
-    without_javascript do
+    with_javascript do
       yield
     end
 
-    with_javascript do
+    without_javascript do
       yield
     end
   end
