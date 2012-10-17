@@ -1,4 +1,4 @@
-status :draft
+status :published
 satisfies_need "564"
 
 # Q1
@@ -50,7 +50,19 @@ date_question :dob_age? do
   calculate :state_pension_date do
     calculator.state_pension_date
   end
+
+  calculate :pension_credit_date do
+    calculator.state_pension_date(:female).strftime("%e %B %Y")
+  end
   
+  calculate :pension_credit_statement do
+    if calculator.state_pension_date(:female) > Date.today
+      "You may be entitled to receive Pension Credit from " + pension_credit_date
+    else
+      "You may have been entitled to receive Pension Credit from " + pension_credit_date
+    end
+  end
+
   calculate :formatted_state_pension_date do
     state_pension_date.strftime("%e %B %Y")
   end
@@ -444,20 +456,21 @@ outcome :amount_result do
     (calculator.three_year_credit_age? ? 3 : 0)
   end
 
-  precalculate :automatic_years_text do
-    if ( Date.parse(dob) < Date.parse("6th October 1953") and (gender == "male") )
-        PhraseList.new(:automatic_years_phrase)
-    else
-      ''
-    end
-  end
 
   precalculate :result_text do
     if qualifying_years_total < 30
       if remaining_years >= missing_years
-        PhraseList.new :too_few_qy_enough_remaining_years
+        text = PhraseList.new :too_few_qy_enough_remaining_years
+        if ( Date.parse(dob) < Date.parse("6th October 1953") and (gender == "male") )
+          text << :automatic_years_phrase
+        end
+        text
       else
-        PhraseList.new :too_few_qy_not_enough_remaining_years
+        text = PhraseList.new :too_few_qy_not_enough_remaining_years
+        if ( Date.parse(dob) < Date.parse("6th October 1953") and (gender == "male") )
+          text << :automatic_years_phrase
+        end
+        text
       end
     else
       PhraseList.new :you_get_full_state_pension
