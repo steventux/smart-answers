@@ -23,6 +23,8 @@ en-GB:
         error_message: Enter a date on or at least 11 weeks before the due date
       # Outcomes
       maternity_leave_details:
+        title: test
+      maternity_leave_details_res:
         title: Your Statutory Maternity Leave
         next_steps: |
           Read our guides to [maternity leave](/maternity-leave) or [pay](/statutory-maternity-pay)

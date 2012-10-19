@@ -50,4 +50,10 @@ class PlanMaternityLeaveTest < ActiveSupport::TestCase
   		end
 	  end
   end
+
+  # context "baby due 22 Dec 2012 - check vars" do
+  #   setup do
+  #     @due_date = Date.parse("22 Dec 2012")
+  #   end
+  # end
 end
