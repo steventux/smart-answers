@@ -5,7 +5,7 @@ en-GB:
         description: "Find out what benefits you might be able to get while abroad and how to claim them."
       title: "Benefits if you’re abroad"
       body: 
-        "Find out what benefits you might be able to get while abroad and how to claim them."
+        "Find out what benefits you might be able to get while abroad and how to claim them"
       options:
         "yes": "Yes"
         "no": "No"
@@ -343,7 +343,7 @@ en-GB:
         body: |
           $!You usually can’t claim UK-based benefits.$!
 
-          However, you may be able to get [tax credits if you’re a crown servant](/tax-credits-if-you-are-moving-country-or-travelling/you-live-outside-the-uk "Tax Credits if you live outside the UK") (you work for the UK government overseas).
+          However, you may be able to get [tax credits if you’re a crown servant](/tax-credits-if-moving-country-or-travelling/you-live-outside-the-uk "Tax Credits if you live outside the UK") (you work for the UK government overseas).
 
           [Contact the International Pension Centre](/state-pension-if-you-retire-abroad/how-to-claim "State Pension if you retire abroad") to find out about your State Pension.
 
