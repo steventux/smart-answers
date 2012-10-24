@@ -84,4 +84,26 @@ namespace :smartanswer do
 			end
 		end
 	end
+
+	desc "Get test urls from spec files"
+	task :gen_test_urls, [:spec_file] => :environment do |t, args|
+		# process add response
+		test_responses = []
+		lowest_tab = 100
+		ar = open(args[:spec_file]) {|f| f.grep(/add_response/)} 
+		ar.each do |a|	
+			# determine lowest tab num
+			tab_size = a[/\A */].size
+			lowest_tab = tab_size if lowest_tab > tab_size 
+
+			response_str = a[/"(.*)"/].gsub(/"/,'') 
+
+			# put in array of arrays
+			test_responses << [response_str, tab_size] 
+		end
+		puts lowest_tab
+		puts test_responses.inspect
+
+		# append to last lower
+	end
 end
