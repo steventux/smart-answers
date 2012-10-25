@@ -1,4 +1,4 @@
-namespace :smartanswer do
+namespace :urls do
 	desc "List external links in YAML files. Goes through the YAML files in lib/flows/locales/en/ 
 		and retrieves an array of internal and external links and text. These are then outputted to two files
 		in lib/data: internal_links.csv and external_links.csv"
