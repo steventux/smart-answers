@@ -90,19 +90,38 @@ namespace :urls do
 		# process add response
 		test_responses = []
 		lowest_tab = 100
+		last_tab = 0
+
+		urls = []
 		ar = open(args[:spec_file]) {|f| f.grep(/add_response/)} 
 		ar.each do |a|	
-			# determine lowest tab num
-			tab_size = a[/\A */].size
-			lowest_tab = tab_size if lowest_tab > tab_size 
+			# puts a
 
-			response_str = a[/"(.*)"/].gsub(/"/,'') 
+			response_str = $1 if a[/add_response ([\S]*)/]
+			response_str.gsub!(/["']?/,'')
+
+
+			tab_size = a[/\A */].size
+			
+			# determine lowest tab num
+			if lowest_tab > tab_size
+				lowest_tab = tab_size
+				curr_url = "/" + response_str
+			elsif last_tab > tab_size
+				curr_url = "/" + response_str
+			else
+				curr_url = urls.last + "/" + response_str
+			end
+			last_tab = tab_size
+
+			urls << curr_url
+			puts curr_url
 
 			# put in array of arrays
-			test_responses << [response_str, tab_size] 
+			# test_responses << [response_str, tab_size]
 		end
-		puts lowest_tab
-		puts test_responses.inspect
+		# puts lowest_tab
+		# puts test_responses.inspect
 
 		# append to last lower
 	end
