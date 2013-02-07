@@ -11,5 +11,10 @@ module SmartAnswer
       new_state.send("#{@variable_name}=", variable_value)
       new_state.freeze
     end
+
+    def calculate(state)
+      result = state.instance_eval(&@calculation)
+      state.send("#{@variable_name}=", result)
+    end
   end
 end

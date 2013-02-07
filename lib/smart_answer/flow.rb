@@ -103,6 +103,12 @@ module SmartAnswer
       State.new(questions.first.name).freeze
     end
 
+    def evaluate_responses(responses)
+      state = State.new(self)
+      state.evaluate_responses(responses)
+      state
+    end
+
     def process(responses)
       responses.inject(start_state) do |state, response|
         return state if state.error

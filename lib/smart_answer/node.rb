@@ -27,6 +27,17 @@ module SmartAnswer
       @precalculations << Calculation.new(variable_name, &block)
     end
 
+    def run_calculations(state, calculations = @calculations)
+      calculations.each do |calculation|
+        calculation.calculate(state)
+      end
+      state
+    end
+
+    def run_precalculations(state)
+      run_calculations(state, @precalculations)
+    end
+
     def evaluate_precalculations(current_state)
       new_state = current_state.dup
       @precalculations.each do |calculation|
