@@ -134,6 +134,7 @@ class MaternityPaternityCalculatorTest < ActiveSupport::TestCase
                     should "ask what the employees earnings are for the period" do
                       assert_current_node :earnings_for_pay_period?
                       ##TODO relevant period calculation
+                      assert_state_variable :pay_pattern, 'weekly'
                     end
 
                     context "answer 1083.20" do
@@ -242,6 +243,7 @@ class MaternityPaternityCalculatorTest < ActiveSupport::TestCase
                       should "calculate the SMP for first day of the month" do
                         add_response "first_day_of_the_month"
                         assert_current_node :maternity_leave_and_pay_result
+                        assert_state_variable :pay_day_in_month, 'first_day_of_the_month'
                       end
 
                       should "calculate the SMP for last day of the month" do
@@ -262,6 +264,10 @@ class MaternityPaternityCalculatorTest < ActiveSupport::TestCase
                       context "last working day of the month" do
                         setup do
                           add_response "last_working_day_of_the_month"
+                        end
+
+                        should "store this as pay_day_in_month" do
+                          assert_state_variable :pay_day_in_month, 'last_working_day_of_the_month'
                         end
 
                         should "ask what days the employee works" do
