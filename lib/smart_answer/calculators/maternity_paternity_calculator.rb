@@ -50,8 +50,7 @@ module SmartAnswer::Calculators
     end
 
     def formatted_relevant_period
-      relevant_period_from, relevant_period_to = relevant_period
-      "#{format_date_day(relevant_period_from)} and #{format_date_day(relevant_period_to)}"
+      relevant_period.map{ |p| format_date_day(p) }.join(" and ")
     end
 
     def leave_end_date
