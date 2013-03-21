@@ -179,6 +179,8 @@ multiple_choice :how_do_you_want_the_smp_calculated? do
   option :weekly_starting
   option :usual_paydates
 
+  save_input_as :smp_calculation_method
+
   next_node do |response|
     if response == "usual_paydates"
       if pay_pattern == "monthly"
@@ -195,7 +197,7 @@ end
 ## QM8
 date_question :when_is_your_employees_next_pay_day? do
   calculate :next_pay_day do
-    Date.parse(responses.last)
+    Date.parse(responses.last) # TODO: Add to calculator#pay_day
   end
 
   next_node :maternity_leave_and_pay_result
@@ -216,6 +218,7 @@ end
 value_question :what_specific_date_each_month_is_the_employee_paid? do
   save_input_as :employee_pay_date
   next_node :maternity_leave_and_pay_result
+  # TODO: Add to calculator#pay_date ... ?
 end
 
 ## QM11
@@ -243,13 +246,16 @@ multiple_choice :what_particular_day_of_the_month_is_the_employee_paid? do
   option :"Friday"
   option :"Saturday"
 
-  save_input_as :day_of_month_paid
-
   next_node :maternity_leave_and_pay_result
 end
 
 ## Maternity outcomes
 outcome :maternity_leave_and_pay_result do
+
+  precalculate :pay_method do
+    calculator.pay_method = pay_day_in_month || 
+      (smp_calculation_method == 'weekly_starting' ? 'weekly_starting' : pay_pattern)
+  end
   precalculate :smp_a do
     sprintf("%.2f", calculator.statutory_maternity_rate_a)
   end

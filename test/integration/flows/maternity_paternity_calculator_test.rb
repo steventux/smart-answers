@@ -163,6 +163,7 @@ class MaternityPaternityCalculatorTest < ActiveSupport::TestCase
 
                           should "show the result node" do
                             assert_current_node :maternity_leave_and_pay_result
+                            assert_state_variable :pay_method, "weekly"
                           end
 
                           should "output a calendar" do
@@ -195,6 +196,7 @@ class MaternityPaternityCalculatorTest < ActiveSupport::TestCase
 
                         should "go straight to the SMP result" do
                           assert_current_node :maternity_leave_and_pay_result
+                          assert_state_variable :pay_method, 'weekly_starting'
                         end
                       end
                     end
@@ -249,6 +251,7 @@ class MaternityPaternityCalculatorTest < ActiveSupport::TestCase
                       should "calculate the SMP for last day of the month" do
                         add_response "last_day_of_the_month"
                         assert_current_node :maternity_leave_and_pay_result
+                        assert_state_variable :pay_method, "last_day_of_the_month"
                       end
 
                       context "specific date each month" do
