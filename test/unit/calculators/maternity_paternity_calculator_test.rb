@@ -317,6 +317,41 @@ module SmartAnswer::Calculators
           assert_equal 5741.01, @calculator.total_statutory_pay
         end
       end
+
+      context "paydates_for_leave from 12 August 2012" do
+        setup do
+          @calculator = MaternityPaternityCalculator.new(Date.parse('12 August 2012'))
+          @calculator.leave_start_date = Date.parse('12 July 2012')
+        end
+        should "calculate SMP weekly pay dates" do
+          @calculator.pay_method = 'weekly_starting'
+          assert_equal ['2012-07-12','2012-07-19','2012-07-26','2012-08-02','2012-08-09'], 
+            @calculator.paydates_for_leave[0...5].map(&:to_s)
+          # TODO: Assert more array items.
+        end
+        should "calculate usual weekly pay dates" do
+          @calculator.pay_method = 'weekly'
+        end
+        should "calculate bi-weekly pay dates" do
+          @calculator.pay_method = 'every_2_weeks'
+        end
+        should "calculate bi-fortnightly pay dates" do
+          @calculator.pay_method = 'every_4_weeks'
+        end
+        should "calculate monthly pay dates" do
+          @calculator.pay_method = 'monthly'
+        end
+        should "calculate irregular pay dates" do
+        end
+        should "calculate first day of the month pay dates" do
+        end
+        should "calculate last day of the month pay dates" do
+        end
+        should "calculate specific monthly pay dates" do
+        end
+        should "calculate last working day of the month pay dates" do
+        end
+      end
     end
   end
 end

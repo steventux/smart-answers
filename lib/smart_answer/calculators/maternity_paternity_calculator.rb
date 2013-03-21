@@ -9,7 +9,7 @@ module SmartAnswer::Calculators
       :matched_week, :a_employment_start
 
     attr_accessor :employment_contract, :leave_start_date, :average_weekly_earnings, :a_notice_leave,
-      :last_payday, :pre_offset_payday
+      :last_payday, :pre_offset_payday, :pay_date, :pay_day, :pay_method
 
     MATERNITY_RATE = PATERNITY_RATE = 135.45
     LEAVE_TYPE_BIRTH = "birth"
@@ -169,6 +169,49 @@ module SmartAnswer::Calculators
     #
     def total_statutory_pay
       ((statutory_maternity_rate_a * 6) + (statutory_maternity_rate_b * 33)).round(2)
+    end
+
+    def is_pay_date?(date)
+      send(:"is_pay_date_#{pay_method}?", date)
+    end
+
+    def paydates_for_leave
+      [].tap do |ary|
+        (pay_start_date...pay_end_date).each do |d|
+          ary << d if is_pay_date?(d)
+        end
+      end
+    end
+
+  private
+    
+    def is_pay_date_weekly_starting?(date)
+      date.wday == pay_start_date.wday
+    end
+    def is_pay_date_weekly?(date)
+      date.wday == pay_day
+    end
+    def is_pay_date_every_2_weeks?(date)
+    end
+    def is_pay_date_every_4_weeks?(date)
+    end
+    def is_pay_date_monthly?(date)
+    end
+    def is_pay_date_irregularly?(date)
+    end
+    def is_pay_date_first_day_of_the_month?(date)
+      date.day == 1
+    end
+    def is_pay_date_last_day_of_the_month?(date)
+      date.day == Date.new(date.year, date.month, -1)
+    end
+    def is_pay_date_specific_date_each_month?(date)
+      date.day == pay_date.day
+    end
+    def is_pay_date_last_working_day_of_the_month?(date)
+    end
+    def is_pay_date_a_certain_week_day_each_month?(date)
+      # TODO: Not sure this is sane.
     end
   end
 end
