@@ -181,11 +181,10 @@ multiple_choice :how_do_you_want_the_smp_calculated? do
 
   next_node do |response|
     if response == "usual_paydates"
-      frequencies = %w(weekly every_2_weeks every_4_weeks irregularly)
-      if frequencies.any? { |freq| responses.include? freq }
-        :when_is_your_employees_next_pay_day?
-      else
+      if pay_pattern == "monthly"
         :when_in_the_month_is_the_employee_paid?
+      else
+        :when_is_your_employees_next_pay_day?
       end
     else
       :maternity_leave_and_pay_result
@@ -209,6 +208,8 @@ multiple_choice :when_in_the_month_is_the_employee_paid? do
   option :specific_date_each_month => :what_specific_date_each_month_is_the_employee_paid?
   option :last_working_day_of_the_month => :what_days_does_the_employee_work?
   option :a_certain_week_day_each_month => :what_particular_day_of_the_month_is_the_employee_paid?
+  
+  save_input_as :pay_day_in_month
 end
 
 ## QM10
