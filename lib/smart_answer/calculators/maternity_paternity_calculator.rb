@@ -9,7 +9,7 @@ module SmartAnswer::Calculators
       :matched_week, :a_employment_start
 
     attr_accessor :employment_contract, :leave_start_date, :average_weekly_earnings, :a_notice_leave,
-      :last_payday, :pre_offset_payday, :pay_date, :pay_day, :pay_method
+      :last_payday, :pre_offset_payday, :pay_date, :pay_day_in_month, :pay_day_in_week, :pay_method
 
     MATERNITY_RATE = PATERNITY_RATE = 135.45
     LEAVE_TYPE_BIRTH = "birth"
@@ -176,8 +176,20 @@ module SmartAnswer::Calculators
     end
 
     def paydates_for_leave
+      case pay_method
+      when 'every_2_weeks'
+        step = 14
+        range_start = pay_date + step
+      when 'every_4_weeks'
+        step = 28
+        range_start = pay_date + step
+      else 
+        step = 1
+        range_start = pay_start_date
+      end
+
       [].tap do |ary|
-        (pay_start_date..pay_end_date).each do |d|
+        (range_start..pay_end_date).step(step).each do |d|
           ary << d if is_pay_date?(d)
         end
       end
@@ -189,14 +201,19 @@ module SmartAnswer::Calculators
       date.wday == pay_start_date.wday
     end
     def is_pay_date_weekly?(date)
-      date.wday == pay_day
+      date.wday == pay_day_in_week
     end
     def is_pay_date_every_2_weeks?(date)
+      true # The step in the pay date range handles this.
     end
-    def is_pay_date_every_4_weeks?(date)
-    end
+    alias is_pay_date_every_4_weeks? is_pay_date_every_2_weeks?
+    
     def is_pay_date_monthly?(date)
+      date.day == pay_day_in_month
     end
+
+    alias is_pay_date_specific_date_each_month? is_pay_date_monthly?
+    
     def is_pay_date_irregularly?(date)
     end
     def is_pay_date_first_day_of_the_month?(date)
@@ -206,7 +223,7 @@ module SmartAnswer::Calculators
       date == Date.new(date.year, date.month, -1)
     end
     def is_pay_date_specific_date_each_month?(date)
-      date.day == pay_date
+      date.day == pay_day_in_month
     end
     def is_pay_date_last_working_day_of_the_month?(date)
       lwd = Date.new(date.year, date.month, -1)
