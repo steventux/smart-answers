@@ -177,7 +177,7 @@ module SmartAnswer::Calculators
 
     def paydates_for_leave
       [].tap do |ary|
-        (pay_start_date...pay_end_date).each do |d|
+        (pay_start_date..pay_end_date).each do |d|
           ary << d if is_pay_date?(d)
         end
       end
@@ -203,12 +203,19 @@ module SmartAnswer::Calculators
       date.day == 1
     end
     def is_pay_date_last_day_of_the_month?(date)
-      date.day == Date.new(date.year, date.month, -1)
+      date == Date.new(date.year, date.month, -1)
     end
     def is_pay_date_specific_date_each_month?(date)
-      date.day == pay_date.day
+      date.day == pay_date
     end
     def is_pay_date_last_working_day_of_the_month?(date)
+      lwd = Date.new(date.year, date.month, -1)
+      offset = case lwd.wday
+               when 0 then -3
+               when 6 then -2
+               else -1
+               end
+      date == Date.new(date.year, date.month, offset)
     end
     def is_pay_date_a_certain_week_day_each_month?(date)
       # TODO: Not sure this is sane.

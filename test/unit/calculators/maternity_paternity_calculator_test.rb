@@ -327,10 +327,14 @@ module SmartAnswer::Calculators
           @calculator.pay_method = 'weekly_starting'
           assert_equal ['2012-07-12','2012-07-19','2012-07-26','2012-08-02','2012-08-09'], 
             @calculator.paydates_for_leave[0...5].map(&:to_s)
-          # TODO: Assert more array items.
+          assert_equal '2013-04-04', @calculator.paydates_for_leave.last.to_s
         end
         should "calculate usual weekly pay dates" do
           @calculator.pay_method = 'weekly'
+          @calculator.pay_day = Date.parse('27 June 2012').wday # Wednesday
+          assert_equal '2012-07-18', @calculator.paydates_for_leave.first.to_s # The next Wednesday after 12 July 2012
+          assert_equal '2012-07-25', @calculator.paydates_for_leave.second.to_s
+          assert_equal '2013-04-10', @calculator.paydates_for_leave.last.to_s # The last Weds in 39 week pay period
         end
         should "calculate bi-weekly pay dates" do
           @calculator.pay_method = 'every_2_weeks'
@@ -344,12 +348,31 @@ module SmartAnswer::Calculators
         should "calculate irregular pay dates" do
         end
         should "calculate first day of the month pay dates" do
+          @calculator.pay_method = 'first_day_of_the_month'
+          assert_equal '2012-08-01', @calculator.paydates_for_leave.first.to_s
+          assert_equal '2012-09-01', @calculator.paydates_for_leave.second.to_s
+          assert_equal '2013-04-01', @calculator.paydates_for_leave.last.to_s
         end
         should "calculate last day of the month pay dates" do
+          @calculator.pay_method = 'last_day_of_the_month'
+          assert_equal '2012-07-31', @calculator.paydates_for_leave.first.to_s
+          assert_equal '2012-08-31', @calculator.paydates_for_leave.second.to_s
+          assert_equal '2013-02-28', @calculator.paydates_for_leave[-2].to_s
+          assert_equal '2013-03-31', @calculator.paydates_for_leave.last.to_s
         end
         should "calculate specific monthly pay dates" do
+          @calculator.pay_method = 'specific_date_each_month'
+          @calculator.pay_date = 5
+          assert_equal '2012-08-05', @calculator.paydates_for_leave.first.to_s
+          assert_equal '2012-09-05', @calculator.paydates_for_leave.second.to_s
+          assert_equal '2013-04-05', @calculator.paydates_for_leave.last.to_s
         end
         should "calculate last working day of the month pay dates" do
+          @calculator.pay_method = 'last_working_day_of_the_month'
+          assert_equal '2012-07-31', @calculator.paydates_for_leave.first.to_s
+          assert_equal '2012-08-31', @calculator.paydates_for_leave.second.to_s
+          assert_equal '2012-09-28', @calculator.paydates_for_leave.third.to_s
+          assert_equal '2013-03-29', @calculator.paydates_for_leave[-1].to_s
         end
       end
     end
