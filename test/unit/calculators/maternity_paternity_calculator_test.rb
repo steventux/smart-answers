@@ -361,6 +361,7 @@ module SmartAnswer::Calculators
           assert_equal '2013-03-25', paydates.last.to_s
         end
         should "calculate irregular pay dates" do
+          # TODO: TBC
         end
         should "calculate first day of the month pay dates" do
           @calculator.pay_method = 'first_day_of_the_month'
@@ -392,6 +393,14 @@ module SmartAnswer::Calculators
           assert_equal '2012-08-31', paydates.second.to_s
           assert_equal '2012-09-28', paydates.third.to_s
           assert_equal '2013-03-29', paydates[-1].to_s
+        end
+        should "calculate the particular weekday of the month pay dates" do
+          @calculator.pay_method = 'a_certain_week_day_each_month'
+          @calculator.pay_week_in_month = 3
+          @calculator.pay_day_in_week = 3
+          # Wednesday 3rd week in the month
+          paydates = @calculator.pay_dates_for_a_certain_week_day_each_month.map(&:to_s)
+          assert_equal ['2012-07-18','2012-08-15','2012-09-19','2012-10-17'], paydates[0...4]
         end
       end
     end

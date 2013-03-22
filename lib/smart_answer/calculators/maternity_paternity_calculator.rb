@@ -9,7 +9,7 @@ module SmartAnswer::Calculators
       :matched_week, :a_employment_start
 
     attr_accessor :employment_contract, :leave_start_date, :average_weekly_earnings, :a_notice_leave,
-      :last_payday, :pre_offset_payday, :pay_date, :pay_day_in_month, :pay_day_in_week, :pay_method
+      :last_payday, :pre_offset_payday, :pay_date, :pay_day_in_month, :pay_day_in_week, :pay_method, :pay_week_in_month
 
     MATERNITY_RATE = PATERNITY_RATE = 135.45
     LEAVE_TYPE_BIRTH = "birth"
@@ -183,6 +183,8 @@ module SmartAnswer::Calculators
       when 'every_4_weeks'
         step = 28
         range_start = pay_date + step
+      when 'a_certain_week_day_each_month'
+        
       else 
         step = 1
         range_start = pay_start_date
@@ -195,6 +197,26 @@ module SmartAnswer::Calculators
       end
     end
 
+    def pay_dates_for_a_certain_week_day_each_month
+      def weekdays_for_month(date, weekday)
+        date.beginning_of_month.step(date.end_of_month).select do |iter_date|
+          weekday == iter_date.wday
+        end
+      end
+
+      def months_between_dates(start_date, end_date)
+        start_date.beginning_of_month.step(end_date.beginning_of_month).select do |date|
+          date.day == 1
+        end
+      end
+      
+      [].tap do |ary|
+        months_between_dates(pay_start_date, pay_end_date).each do |date|
+          ary << weekdays_for_month(date, pay_day_in_week)[pay_week_in_month - 1]
+        end
+      end
+    end
+  
   private
     
     def is_pay_date_weekly_starting?(date)
@@ -215,6 +237,7 @@ module SmartAnswer::Calculators
     alias is_pay_date_specific_date_each_month? is_pay_date_monthly?
     
     def is_pay_date_irregularly?(date)
+      # TODO: TBC how this is calculated.
     end
     def is_pay_date_first_day_of_the_month?(date)
       date.day == 1
@@ -226,7 +249,8 @@ module SmartAnswer::Calculators
       date.day == pay_day_in_month
     end
     def is_pay_date_last_working_day_of_the_month?(date)
-      lwd = Date.new(date.year, date.month, -1)
+      lwd = Date.new(date.year, date.month, -1) # Last weekday of the month.
+      # TODO: Use cwday?
       offset = case lwd.wday
                when 0 then -3
                when 6 then -2
@@ -234,8 +258,6 @@ module SmartAnswer::Calculators
                end
       date == Date.new(date.year, date.month, offset)
     end
-    def is_pay_date_a_certain_week_day_each_month?(date)
-      # TODO: Not sure this is sane.
-    end
+
   end
 end
