@@ -81,7 +81,7 @@ module SmartAnswer::Calculators
     end
 
     def statutory_maternity_rate_b
-      (MATERNITY_RATE < statutory_maternity_rate ? MATERNITY_RATE : statutory_maternity_rate)
+      [current_statutory_rate, statutory_maternity_rate].min
     end
 
     def earning_limit_rates_birth
@@ -137,7 +137,7 @@ module SmartAnswer::Calculators
     ## Statutory paternity rate
     def statutory_paternity_rate
       awe = (@average_weekly_earnings.to_f * 0.9).round(2)
-      (PATERNITY_RATE < awe ? PATERNITY_RATE : awe)
+      [current_statutory_rate, awe].min
     end
 
     ## Adoption
@@ -211,14 +211,17 @@ module SmartAnswer::Calculators
       end
     end
 
-    def statutory_rate
+    def statutory_rate(date)
       rates = [
         { min: first_sunday_in_month(4, 2012), max: first_sunday_in_month(4, 2013), amount: 135.45 },
         { min: first_sunday_in_month(4, 2013), max: first_sunday_in_month(4, 2014), amount: 136.78 }
       ]
-      now = Date.today
-      rate = rates.find{ |r| r[:min] <= now and now < r[:max] } || rates.last
+      rate = rates.find{ |r| r[:min] <= date and date < r[:max] } || rates.last
       rate[:amount]
+    end
+
+    def current_statutory_rate
+      statutory_rate(Date.today)
     end
   
   private

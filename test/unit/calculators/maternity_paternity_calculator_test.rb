@@ -11,6 +11,7 @@ module SmartAnswer::Calculators
           @due_date = 4.months.since(Date.today)
           @start_of_week_in_four_months = @due_date - @due_date.wday
           @calculator = MaternityPaternityCalculator.new(@due_date)
+          Timecop.travel('25 March 2013')
         end
 
         should "calculate expected birth week" do
@@ -410,38 +411,25 @@ module SmartAnswer::Calculators
           @calculator.leave_start_date = Date.parse('29 March 2013')
         end
         context "for 2012 rates" do
-          setup do
-            Timecop.travel('6 April 2012')
-          end
           should "give the correct rate for the period" do
-            assert_equal 135.45, @calculator.statutory_rate
+            assert_equal 135.45, @calculator.statutory_rate(Date.parse('6 April 2012'))
           end
         end
         context "just before uprating should occur" do
-          setup do
-            Timecop.travel('6 April 2013')
-          end
           should "give the correct rate for the period" do
-            assert_equal 135.45, @calculator.statutory_rate
+            assert_equal 135.45, @calculator.statutory_rate(Date.parse('6 April 2013'))
           end
         end
         context "when uprating should start" do
-          setup do
-            Timecop.travel('7 April 2013')
-          end
           should "give the correct rate for the period" do
-            assert_equal 136.78, @calculator.statutory_rate
+            assert_equal 136.78, @calculator.statutory_rate(Date.parse('7 April 2013'))
           end
         end
         context "for 2043 rates" do
-          setup do
-            Timecop.travel('6 April 2043')
-          end
           should "give a default rate for a date in the future" do
-            assert_equal 136.78, @calculator.statutory_rate
+            assert_equal 136.78, @calculator.statutory_rate(Date.parse('6 April 2043'))
           end
         end
-
       end
     end
   end
