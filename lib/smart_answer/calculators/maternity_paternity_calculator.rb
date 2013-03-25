@@ -198,8 +198,6 @@ module SmartAnswer::Calculators
     end
 
     def pay_dates_for_a_certain_week_day_each_month
-      
-
       def months_between_dates(start_date, end_date)
         start_date.beginning_of_month.step(end_date.beginning_of_month).select do |date|
           date.day == 1
@@ -212,18 +210,11 @@ module SmartAnswer::Calculators
         end
       end
     end
+
     def statutory_rate
       rates = [
-        {
-          min: weekdays_for_month(Date.parse("6 April 2012"), 0).first, 
-          max: weekdays_for_month(Date.parse("6 April 2013"), 0).first, 
-          amount: 135.45
-        },
-        {
-          min: weekdays_for_month(Date.parse("6 April 2013"), 0).first, 
-          max: weekdays_for_month(Date.parse("6 April 2014"), 0).first, 
-          amount: 136.78
-        }
+        { min: first_sunday_in_month(4, 2012), max: first_sunday_in_month(4, 2013), amount: 135.45 },
+        { min: first_sunday_in_month(4, 2013), max: first_sunday_in_month(4, 2014), amount: 136.78 }
       ]
       now = Date.today
       rate = rates.find{ |r| r[:min] <= now and now < r[:max] } || rates.last
@@ -231,6 +222,10 @@ module SmartAnswer::Calculators
     end
   
   private
+
+    def first_sunday_in_month(month, year)
+      weekdays_for_month(Date.civil(year, month, 1), 0).first
+    end
 
     def weekdays_for_month(date, weekday)
       date.beginning_of_month.step(date.end_of_month).select do |iter_date|

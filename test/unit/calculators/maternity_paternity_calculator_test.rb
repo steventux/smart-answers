@@ -411,15 +411,23 @@ module SmartAnswer::Calculators
         end
         context "for 2012 rates" do
           setup do
-            Timecop.travel(Date.parse('6 April 2012'))
+            Timecop.travel('6 April 2012')
           end
           should "give the correct rate for the period" do
             assert_equal 135.45, @calculator.statutory_rate
           end
         end
-        context "for 2013 rates" do
+        context "just before uprating should occur" do
           setup do
-            Timecop.travel(Date.parse('6 April 2013'))
+            Timecop.travel('6 April 2013')
+          end
+          should "give the correct rate for the period" do
+            assert_equal 135.45, @calculator.statutory_rate
+          end
+        end
+        context "when uprating should start" do
+          setup do
+            Timecop.travel('7 April 2013')
           end
           should "give the correct rate for the period" do
             assert_equal 136.78, @calculator.statutory_rate
@@ -427,7 +435,7 @@ module SmartAnswer::Calculators
         end
         context "for 2043 rates" do
           setup do
-            Timecop.travel(Date.parse('6 April 2043'))
+            Timecop.travel('6 April 2043')
           end
           should "give a default rate for a date in the future" do
             assert_equal 136.78, @calculator.statutory_rate
