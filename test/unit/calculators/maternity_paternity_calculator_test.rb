@@ -400,7 +400,7 @@ module SmartAnswer::Calculators
           @calculator.pay_week_in_month = 3
           @calculator.pay_day_in_week = 3
           # Wednesday 3rd week in the month
-          paydates = @calculator.pay_dates_for_a_certain_week_day_each_month.map(&:to_s)
+          paydates = @calculator.paydates_for_a_certain_week_day_each_month.map(&:to_s)
           assert_equal ['2012-07-18','2012-08-15','2012-09-19','2012-10-17'], paydates[0...4]
           assert_equal '2013-04-17', paydates.last
         end
@@ -429,6 +429,26 @@ module SmartAnswer::Calculators
           should "give a default rate for a date in the future" do
             assert_equal 136.78, @calculator.statutory_rate(Date.parse('6 April 2043'))
           end
+        end
+      end
+      context "paydates and pay" do
+        setup do
+          @calculator = MaternityPaternityCalculator.new(Date.parse('21 January 2013'))
+          @calculator.leave_start_date = Date.parse('03 January 2013')
+        end
+        should "calculate pay due for each pay date" do
+          @calculator.pay_day_in_week = 5 # Friday 
+          @calculator.pay_method = 'weekly'
+          @calculator.calculate_average_weekly_pay('weekly', 2000)
+          paydates_and_pay = @calculator.paydates_and_pay
+          assert_equal '2013-01-04', paydates_and_pay.first[:date].to_s
+          assert_equal 225.0, paydates_and_pay.first[:pay]
+          last_rate_a_payment = paydates_and_pay[5]
+          assert_equal '2013-02-08', last_rate_a_payment[:date].to_s
+          assert_equal 212.21, last_rate_a_payment[:pay]
+          first_rate_b_payment = paydates_and_pay[6]
+          assert_equal '2013-02-15', first_rate_b_payment[:date].to_s
+          assert_equal 135.45, first_rate_b_payment[:pay]
         end
       end
     end

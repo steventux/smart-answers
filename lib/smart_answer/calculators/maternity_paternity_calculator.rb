@@ -171,6 +171,20 @@ module SmartAnswer::Calculators
       ((statutory_maternity_rate_a * 6) + (statutory_maternity_rate_b * 33)).round(2)
     end
 
+    def paydates_and_pay
+      paydates = pay_method == 'a_certain_week_day_each_month' ? 
+        paydates_for_a_certain_week_day_each_month : paydates_for_leave
+
+      # TODO: Could this be made less clumsy with #each_slice?
+      [].tap do |ary|
+        paydates.each_with_index do |date, index|
+          if next_paydate = paydates[index + 1]
+            ary << { date: date, pay: pay_for_period(date, next_paydate - 1) }
+          end
+        end
+      end
+    end
+
     def is_pay_date?(date)
       send(:"is_pay_date_#{pay_method}?", date)
     end
@@ -183,8 +197,6 @@ module SmartAnswer::Calculators
       when 'every_4_weeks'
         step = 28
         range_start = pay_date + step
-      when 'a_certain_week_day_each_month'
-        
       else 
         step = 1
         range_start = pay_start_date
@@ -197,7 +209,7 @@ module SmartAnswer::Calculators
       end
     end
 
-    def pay_dates_for_a_certain_week_day_each_month
+    def paydates_for_a_certain_week_day_each_month
       def months_between_dates(start_date, end_date)
         start_date.beginning_of_month.step(end_date.beginning_of_month).select do |date|
           date.day == 1
@@ -226,6 +238,22 @@ module SmartAnswer::Calculators
   
   private
 
+    def pay_for_period(start_date, end_date)
+      pay = 0.0
+      start_date.step(end_date) do |d|
+        pay += (rate_for(d) / 7)
+      end
+      pay.round(2) # TODO: Verify rounding here.
+    end
+
+    def rate_for(date)
+      if date < 6.weeks.since(leave_start_date)
+        statutory_maternity_rate_a
+      else
+        statutory_rate(date)
+      end
+    end
+
     def first_sunday_in_month(month, year)
       weekdays_for_month(Date.civil(year, month, 1), 0).first
     end
@@ -239,9 +267,11 @@ module SmartAnswer::Calculators
     def is_pay_date_weekly_starting?(date)
       date.wday == pay_start_date.wday
     end
+
     def is_pay_date_weekly?(date)
       date.wday == pay_day_in_week
     end
+    
     def is_pay_date_every_2_weeks?(date)
       true # The step in the pay date range handles this.
     end
@@ -256,15 +286,19 @@ module SmartAnswer::Calculators
     def is_pay_date_irregularly?(date)
       # TODO: TBC how this is calculated.
     end
+    
     def is_pay_date_first_day_of_the_month?(date)
       date.day == 1
     end
+    
     def is_pay_date_last_day_of_the_month?(date)
       date == Date.new(date.year, date.month, -1)
     end
+    
     def is_pay_date_specific_date_each_month?(date)
       date.day == pay_day_in_month
     end
+    
     def is_pay_date_last_working_day_of_the_month?(date)
       lwd = Date.new(date.year, date.month, -1) # Last weekday of the month.
       offset = case lwd.wday
@@ -276,6 +310,5 @@ module SmartAnswer::Calculators
     end
 
   end
-
 
 end
