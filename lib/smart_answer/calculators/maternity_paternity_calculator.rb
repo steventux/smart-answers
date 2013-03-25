@@ -198,11 +198,7 @@ module SmartAnswer::Calculators
     end
 
     def pay_dates_for_a_certain_week_day_each_month
-      def weekdays_for_month(date, weekday)
-        date.beginning_of_month.step(date.end_of_month).select do |iter_date|
-          weekday == iter_date.wday
-        end
-      end
+      
 
       def months_between_dates(start_date, end_date)
         start_date.beginning_of_month.step(end_date.beginning_of_month).select do |date|
@@ -216,8 +212,31 @@ module SmartAnswer::Calculators
         end
       end
     end
+    def statutory_rate
+      rates = [
+        {
+          min: weekdays_for_month(Date.parse("6 April 2012"), 0).first, 
+          max: weekdays_for_month(Date.parse("6 April 2013"), 0).first, 
+          amount: 135.45
+        },
+        {
+          min: weekdays_for_month(Date.parse("6 April 2013"), 0).first, 
+          max: weekdays_for_month(Date.parse("6 April 2014"), 0).first, 
+          amount: 136.78
+        }
+      ]
+      now = Date.today
+      rate = rates.find{ |r| r[:min] <= now and now < r[:max] } || rates.last
+      rate[:amount]
+    end
   
   private
+
+    def weekdays_for_month(date, weekday)
+      date.beginning_of_month.step(date.end_of_month).select do |iter_date|
+        weekday == iter_date.wday
+      end
+    end
     
     def is_pay_date_weekly_starting?(date)
       date.wday == pay_start_date.wday
@@ -250,7 +269,6 @@ module SmartAnswer::Calculators
     end
     def is_pay_date_last_working_day_of_the_month?(date)
       lwd = Date.new(date.year, date.month, -1) # Last weekday of the month.
-      # TODO: Use cwday?
       offset = case lwd.wday
                when 0 then -3
                when 6 then -2
@@ -260,4 +278,6 @@ module SmartAnswer::Calculators
     end
 
   end
+
+
 end
