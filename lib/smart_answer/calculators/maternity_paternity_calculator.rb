@@ -175,11 +175,10 @@ module SmartAnswer::Calculators
       paydates = pay_method == 'a_certain_week_day_each_month' ? 
         paydates_for_a_certain_week_day_each_month : paydates_for_leave
 
-      # TODO: Could this be made less clumsy with #each_slice?
       [].tap do |ary|
         paydates.each_with_index do |date, index|
           if next_paydate = paydates[index + 1]
-            ary << { date: date, pay: pay_for_period(date, next_paydate - 1) } # TODO this doesn't satisfy the uprating 1st week rule.
+            ary << { date: date, pay: pay_for_period(date, next_paydate) }
           end
         end
       end
@@ -240,8 +239,8 @@ module SmartAnswer::Calculators
 
     def pay_for_period(start_date, end_date)
       pay = 0.0
-      start_date.step(end_date) do |d|
-        pay += (rate_for(d) / 7)
+      (start_date...end_date).each_slice(7) do |week|
+        pay += rate_for(week.first)
       end
       pay.round(2) # TODO: Verify rounding here.
     end

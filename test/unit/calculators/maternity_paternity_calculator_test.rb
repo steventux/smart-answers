@@ -445,7 +445,7 @@ module SmartAnswer::Calculators
           assert_equal 225.0, paydates_and_pay.first[:pay]
           last_rate_a_payment = paydates_and_pay[5]
           assert_equal '2013-02-08', last_rate_a_payment[:date].to_s
-          assert_equal 212.21, last_rate_a_payment[:pay]
+          assert_equal 225.0, last_rate_a_payment[:pay]
           first_rate_b_payment = paydates_and_pay[6]
           assert_equal '2013-02-15', first_rate_b_payment[:date].to_s
           assert_equal 135.45, first_rate_b_payment[:pay]
