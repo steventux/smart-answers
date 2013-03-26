@@ -436,7 +436,7 @@ module SmartAnswer::Calculators
           @calculator = MaternityPaternityCalculator.new(Date.parse('21 January 2013'))
           @calculator.leave_start_date = Date.parse('03 January 2013')
         end
-        should "calculate pay due for each pay date" do
+        should "calculate pay due for each pay date on a weekly cycle" do
           @calculator.pay_day_in_week = 5 # Friday 
           @calculator.pay_method = 'weekly'
           @calculator.calculate_average_weekly_pay('weekly', 2000)
@@ -449,6 +449,14 @@ module SmartAnswer::Calculators
           first_rate_b_payment = paydates_and_pay[6]
           assert_equal '2013-02-15', first_rate_b_payment[:date].to_s
           assert_equal 135.45, first_rate_b_payment[:pay]
+          uprating_payment = paydates_and_pay[14]
+          assert_equal '2013-04-12', uprating_payment[:date].to_s
+          assert_equal 136.78, uprating_payment[:pay]
+          last_payment = paydates_and_pay.last
+          assert_equal '2013-09-20', last_payment[:date].to_s
+          assert_equal 136.78, last_payment[:pay]
+        end
+        should "" do
         end
       end
     end

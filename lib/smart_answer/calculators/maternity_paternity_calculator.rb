@@ -179,7 +179,7 @@ module SmartAnswer::Calculators
       [].tap do |ary|
         paydates.each_with_index do |date, index|
           if next_paydate = paydates[index + 1]
-            ary << { date: date, pay: pay_for_period(date, next_paydate - 1) }
+            ary << { date: date, pay: pay_for_period(date, next_paydate - 1) } # TODO this doesn't satisfy the uprating 1st week rule.
           end
         end
       end
