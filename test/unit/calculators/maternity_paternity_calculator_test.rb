@@ -401,7 +401,7 @@ module SmartAnswer::Calculators
         end
         should "calculate the particular weekday of the month pay dates" do
           @calculator.pay_method = 'a_certain_week_day_each_month'
-          @calculator.pay_week_in_month = 3
+          @calculator.pay_week_in_month = "third" 
           @calculator.pay_day_in_week = 3
           # Wednesday 3rd week in the month
           paydates = @calculator.paydates_for_a_certain_week_day_each_month.map(&:to_s)
@@ -541,7 +541,7 @@ module SmartAnswer::Calculators
         should "calculate pay due for a certain weekday each month" do
           @calculator.pay_method = 'a_certain_week_day_each_month'
           @calculator.pay_day_in_week = 5
-          @calculator.pay_week_in_month = 2 # 2nd Friday of the month
+          @calculator.pay_week_in_month = "second" # 2nd Friday of the month
           @calculator.calculate_average_weekly_pay('monthly', 2000)
 
           paydates_and_pay = @calculator.paydates_and_pay

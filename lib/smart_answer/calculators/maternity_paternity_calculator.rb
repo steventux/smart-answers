@@ -225,7 +225,8 @@ module SmartAnswer::Calculators
       
       [].tap do |ary|
         months_between_dates(pay_start_date << 1, pay_end_date).each do |date|
-          ary << weekdays_for_month(date, pay_day_in_week)[pay_week_in_month - 1]
+          weekdays = weekdays_for_month(date, pay_day_in_week)
+          ary << weekdays.send(pay_week_in_month)
         end
       end
     end
