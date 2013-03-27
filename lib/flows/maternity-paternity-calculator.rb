@@ -197,7 +197,8 @@ end
 ## QM8
 date_question :when_is_your_employees_next_pay_day? do
   calculate :next_pay_day do
-    Date.parse(responses.last) # TODO: Add to calculator#pay_day
+    calculator.pay_date = Date.parse(responses.last)
+    calculator.pay_date
   end
 
   next_node :maternity_leave_and_pay_result
@@ -217,8 +218,13 @@ end
 ## QM10
 value_question :what_specific_date_each_month_is_the_employee_paid? do
   save_input_as :employee_pay_date
+  
+  calculate :pay_day_in_month do
+    raise InvalidResponse unless responses.last.to_i > 0
+    calculator.pay_day_in_month = responses.last.to_i
+  end
+
   next_node :maternity_leave_and_pay_result
-  # TODO: Add to calculator#pay_date ... ?
 end
 
 ## QM11
@@ -246,6 +252,33 @@ multiple_choice :what_particular_day_of_the_month_is_the_employee_paid? do
   option :"Friday"
   option :"Saturday"
 
+  calculate :pay_day_in_week do
+    calculator.pay_day_in_week = case responses.last
+      when "Sunday" then 0
+      when "Monday" then 1
+      when "Tuesday" then 2
+      when "Wednesday" then 3
+      when "Thursday" then 4
+      when "Friday" then 5
+      when "Saturday" then 6
+      end
+    responses.last
+  end
+
+  next_node :which_week_in_month_is_the_employee_paid?
+end
+
+## QM13
+multiple_choice :which_week_in_month_is_the_employee_paid? do
+  option :"first"
+  option :"second"
+  option :"third"
+  option :"fourth"
+  option :"last"
+  
+  calculate :pay_week_in_month do
+    calculator.pay_week_in_month = responses.last
+  end
   next_node :maternity_leave_and_pay_result
 end
 
@@ -295,6 +328,16 @@ outcome :maternity_leave_and_pay_result do
       pay_info = PhraseList.new(:maternity_pay_table)
     end
     pay_info
+  end
+
+  precalculate :pay_dates_and_pay do
+    rows = []
+    unless not_entitled_to_pay_reason.present?
+      calculator.paydates_and_pay.each do |date_and_pay|
+        rows << %Q(#{date_and_pay[:date].strftime("%e %B %Y")}|£#{date_and_pay[:pay]})
+      end
+    end
+    rows.join("\n")
   end
 
   calendar do |responses|
