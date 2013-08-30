@@ -1,5 +1,7 @@
 SmartAnswers::Application.routes.draw do
   constraints :id => /[a-z0-9-]+/i do
+    match '/:id/analysis',
+      :to => 'smart_answers#analyse'
     match '/:id(/:started(/*responses)).:format',
       :to => 'smart_answers#show',
       :as => :formatted_smart_answer,

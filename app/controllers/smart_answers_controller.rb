@@ -33,6 +33,11 @@ class SmartAnswersController < ApplicationController
     set_expiry
   end
 
+  def analyse
+    analyser = SmartAnswer::Tree.new()
+    analysis = analyser.analyse params[:id]
+  end
+
 private
   def json_request?
     request.format == Mime::JSON
