@@ -1,5 +1,6 @@
 {
   "id" : "<%= @analysis[:id] %>",
   <%# todo don't use raw here %>
-  "nodes" : [<%= raw @analysis[:nodes].map {|node| '"' + node.to_s + '"' }.join(", ")%>]
+  "nodes" : [<%= raw @analysis[:nodes].map {|node| '"' + node.to_s + '"' }.join(", ")%>],
+  "raw" : "<%= @analysis %>",
 }
