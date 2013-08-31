@@ -35,7 +35,7 @@ class SmartAnswersController < ApplicationController
 
   def analyse
     analyser = SmartAnswer::Tree.new()
-    analysis = analyser.analyse params[:id]
+    @analysis = analyser.analyse(params[:id])
   end
 
 private
