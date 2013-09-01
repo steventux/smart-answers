@@ -16,6 +16,7 @@ class SmartAnswer::Tree
   end
 
   def targets_for_node(node)
-    node.question? ? node.targets : []
+    return [] unless node.question?
+    node.targets
   end
 end
