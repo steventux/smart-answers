@@ -8,7 +8,7 @@ class SmartAnswer::Tree
       nodes: q.nodes.map do |node|
         {
           name: node.name,
-          class: node.class.name
+          class: node.class.name.demodulize
         }
       end
     }
