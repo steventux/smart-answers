@@ -9,12 +9,13 @@ class SmartAnswer::Tree
         {
           name: node.name,
           class: node.class.name.demodulize,
-          question: node.question?,
-          targets: node.question? ? node.targets : nil
+          targets: targets_for_node(node)
         }
       end
     }
+  end
 
-    # q.nodes[0].next_node(:yes)
+  def targets_for_node(node)
+    node.question? ? node.targets : []
   end
 end
