@@ -1,11 +1,16 @@
 class SmartAnswer::Tree
+  # be rails r 'pp SmartAnswer::Tree.new().analyse("report-a-lost-or-stolen-passport")'
   def analyse(question_name)
     reg =  SmartAnswer::FlowRegistry.instance
     q = reg.find(question_name)
-    yeah = {
+    {
       id: question_name,
-      raw: q.inspect,
-      nodes: q.nodes
+      nodes: q.nodes.map do |node|
+        {
+          name: node.name,
+          class: node.class.name
+        }
+      end
     }
 
     # q.nodes[0].next_node(:yes)
