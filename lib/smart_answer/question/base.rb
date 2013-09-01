@@ -1,10 +1,12 @@
 module SmartAnswer
   module Question
     class Base < Node
+      attr_reader :targets
 
       def initialize(name, options = {}, &block)
         @save_input_as = nil
         @next_node_function ||= lambda {|_|}
+        @targets = []
         super
       end
 
@@ -13,6 +15,7 @@ module SmartAnswer
           @next_node_function = block
         elsif args.count == 1
           @next_node_function = lambda { |_input| args.first }
+          @targets = args.first
         else
           raise ArgumentError
         end
