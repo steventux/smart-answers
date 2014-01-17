@@ -62,6 +62,7 @@ private
       redirect_to action: :show,
         id: @name,
         started: 'y',
+        skip_slimmer: 1,
         responses: @presenter.current_state.responses,
         protocol: (request.ssl? || Rails.env.production?) ? 'https' : 'http'
     end
