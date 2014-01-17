@@ -17,7 +17,7 @@ class SmartAnswerPresenter
   end
 
   def artefact
-    @artefact ||= content_api.artefact(@flow.name.to_s)
+    @artefact ||= {}
   end
 
   def i18n_prefix
